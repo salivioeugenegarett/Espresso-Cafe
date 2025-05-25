@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Espresso & Co.</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    .navbar {
+      background: linear-gradient(90deg, #c3baff, #a1d1f7);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #fff;
+    }
+
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar li a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .navbar li a:hover {
+      text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.7);
+    }
+
+    section {
+      padding: 2rem;
+    }
+
+    .intro {
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin: 2rem;
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .highlight h2, .menu-section h2 {
+      color: #7257f5;
+      margin-bottom: 1rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .product-item {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .product-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    .product-item img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .product-item h4 {
+      margin: 0.5rem 0;
+      color: #4e4e4e;
+    }
+
+    .product-item p {
+      color: #888;
+    }
+
+    .product-item button {
+      margin-top: 0.5rem;
+      background: #a1d1f7;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .product-item button:hover {
+      background: #90c3eb;
+      transform: scale(1.05);
+    }
+
+    .cart {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      width: 300px;
+      z-index: 1000;
+    }
+
+    .cart h3 {
+      margin-top: 0;
+      color: #7257f5;
+    }
+
+    .cart button {
+      background: #a1d1f7;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .cart button:hover {
+      background: #90c3eb;
+      transform: scale(1.05);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      width: 400px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    button:hover, .close:hover {
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <h1>Espresso & Co.</h1>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#bestsellers">Best Sellers</a></li>
+      <li><a href="#musttry">Must Try</a></li>
+    </ul>
+  </nav>
+
+  <!-- Introduction -->
+  <section id="home" class="intro">
+    <h2>Welcome to Espresso & Co.</h2>
+    <p>Your cozy corner for artisan coffee and freshly baked pastries.</p>
+  </section>
+
+  <!-- Best Sellers -->
+  <section id="bestsellers" class="highlight">
+    <h2>Best Sellers</h2>
+    <div class="product-grid" id="bestSellersList"></div>
+  </section>
+
+  <!-- Must Try -->
+  <section id="musttry" class="highlight">
+    <h2>Must Try</h2>
+    <div class="product-grid" id="mustTryList"></div>
+  </section>
+
+  <!-- Order Page -->
+  <section id="order" class="menu-section">
+    <h2>Order Your Favorites</h2>
+    <div class="product-grid" id="menuItems"></div>
+  </section>
+
+  <!-- Floating Cart -->
+  <div class="cart" id="cart">
+    <h3>Your Cart</h3>
+    <ul id="cartItems"></ul>
+    <button onclick="checkout()">Checkout</button>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div class="modal" id="checkoutModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3>Order Summary</h3>
+      <ul id="orderSummary"></ul>
+      <p id="totalPrice"></p>
+    </div>
+  </div>
+
+  <script>
+    const menuItems = [
+      { name: "Caramel Latte", price: 99.00, image: "images/caramel-latte.jpg", type: "beverage" },
+      { name: "Espresso", price: 99.00, image: "images/espresso.jpg", type: "beverage" },
+      { name: "Iced Mocha", price: 89.00, image: "images/mocha.jpg", type: "beverage" },
+      { name: "Vanilla Cold Brew", price: 89.00, image: "images/vanilla.jpg", type: "beverage" },
+      { name: "Blueberry Muffin", price: 79.00, image: "images/muffin.jpg", type: "pantry" },
+      { name: "Chocolate Croissant", price: 99.00, image: "images/croissant.jpg", type: "pantry" },
+      { name: "Banana Bread", price: 89.00, image: "images/banana.jpg", type: "pantry" },
+      { name: "Cinnamon Roll", price: 79.00, image: "images/cinnamon.jpg", type: "pantry" }
+    ];
+
+    const cart = [];
+
+      async function loadMenu() {
+        try {
+          const response = await fetch('get_menu.php');
+          const menuItems = await response.json();
+
+          const menuGrid = document.getElementById("menuItems");
+          const bestSellers = document.getElementById("bestSellersList");
+          const mustTry = document.getElementById("mustTryList");
+
+          menuGrid.innerHTML = '';
+          bestSellers.innerHTML = '';
+          mustTry.innerHTML = '';
+
+          menuItems.forEach(item => menuGrid.appendChild(createProductCard(item)));
+
+          // Example best sellers: first beverage and first pantry
+          const firstBeverage = menuItems.find(m => m.type === "beverage");
+          if (firstBeverage) bestSellers.appendChild(createProductCard(firstBeverage));
+          const firstPantry = menuItems.find(m => m.type === "pantry");
+          if (firstPantry) bestSellers.appendChild(createProductCard(firstPantry));
+
+          // Example must try items by name (adjust if not present)
+          const icedMocha = menuItems.find(m => m.name === "Iced Mocha");
+          if (icedMocha) mustTry.appendChild(createProductCard(icedMocha));
+          const cinnamonRoll = menuItems.find(m => m.name === "Cinnamon Roll");
+          if (cinnamonRoll) mustTry.appendChild(createProductCard(cinnamonRoll));
+
+        } catch (error) {
+          console.error("Failed to load menu:", error);
+        }
+      }
+
+      function createProductCard(item) {
+        const div = document.createElement("div");
+        div.className = "product-item";
+
+        div.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <h4>${item.name}</h4>
+          <p>₱${parseFloat(item.price).toFixed(2)}</p>
+          <button onclick="addToCart(${item.id}, '${item.name}', ${item.price})">Add to Cart</button>
+        `;
+        return div;
+      }
+
+      function addToCart(id, name, price) {
+        const existing = cart.find(item => item.id === id);
+        if (existing) {
+          existing.quantity++;
+        } else {
+          cart.push({ id, name, price, quantity: 1 });
+        }
+        updateCart();
+      }
+
+      function updateCart() {
+        const cartItems = document.getElementById("cartItems");
+        cartItems.innerHTML = "";
+
+        cart.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `${item.name} x${item.quantity} - ₱${(item.price * item.quantity).toFixed(2)}`;
+          cartItems.appendChild(li);
+        });
+      }
+
+      async function checkout() {
+        if (cart.length === 0) {
+          alert("Your cart is empty.");
+          return;
+        }
+
+        // Send each item as order to order.php
+        for (const item of cart) {
+          await fetch('submit_order.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ item_id: item.id, quantity: item.quantity })
+          });
+        }
+
+        alert("Thank you for your order!");
+        cart.length = 0;
+        updateCart();
+      }
+
+      window.onload = loadMenu;
+
+  </script>
+</body>
+</html>
